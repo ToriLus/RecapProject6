@@ -15,6 +15,14 @@ export default async function handler(request, response) {
     response.status(200).json(place);
   }
 
+  if (request.method === "PATCH") {
+    const placeToUpdate = await Place.findByIdAndUpdate(id, {
+      $set: request.body,
+    });
+
+    response.status(200).json(placeToUpdate);
+    // If successful, you'll receive an OK status code.
+  }
   async function handleSubmit(event) {
     event.preventDefault();
 
