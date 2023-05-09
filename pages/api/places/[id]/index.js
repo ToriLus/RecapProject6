@@ -1,17 +1,42 @@
-import { places } from '../../../../lib/db.js';
+import dbConnect from "../../../../db/connect";
+import Place from "../../../../db/models/Place";
 
-export default function handler(request, response) {
+export default async function handler(request, response) {
+  await dbConnect();
   const { id } = request.query;
 
-  if (!id) {
-    return;
+  if (request.method === "GET") {
+    const place = await Place.findById(id);
+
+    if (!place) {
+      return response.status(404).json({ status: "Not Found" });
+    }
+
+    response.status(200).json(place);
   }
 
-  const place = places.find((place) => place.id === id);
+  async function handleSubmit(event) {
+    event.preventDefault();
 
-  if (!place) {
-    return response.status(404).json({ status: 'Not found' });
+    const formData = new FormData(event.target);
+    const placeData = Object.fromEntries(formData);
+
+    const response = await fetch("/api/places", {
+      method: "POST",
+      body: JSON.stringify(placeData),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (response.ok) {
+      await response.json();
+
+      Place.mutate();
+
+      event.target.reset();
+    } else {
+      console.error(`Error: ${response.status}`);
+    }
   }
-
-  response.status(200).json(place);
 }
