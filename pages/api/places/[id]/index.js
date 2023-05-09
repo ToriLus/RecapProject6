@@ -23,6 +23,7 @@ export default async function handler(request, response) {
     response.status(200).json(placeToUpdate);
     // If successful, you'll receive an OK status code.
   }
+  //this is a random comment
 
   if (request.method === "DELETE") {
     const placeToDelete = await Place.findByIdAndDelete(id);
