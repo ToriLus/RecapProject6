@@ -12,7 +12,7 @@ export default async function handler(request, response) {
     try {
       const placeData = request.body;
       const place = new Place(placeData);
-      await joke.save();
+      await place.save();
       response.status(201).json({ status: "Place created" });
     } catch (error) {
       console.log(error);
